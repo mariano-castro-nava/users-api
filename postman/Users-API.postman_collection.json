@@ -1,0 +1,144 @@
+{
+  "info": {
+    "name": "Chakray Users API",
+    "_postman_id": "b3a7d2e1-0000-4a00-9000-chakrayusers1",
+    "description": "Collection for the Chakray Java technical test. Run 'Login' first: it stores the JWT in the {{token}} collection variable, which every /users request uses automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Login (get JWT)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "var json = pm.response.json();",
+              "if (json && json.token) {",
+              "    pm.collectionVariables.set('token', json.token);",
+              "    console.log('Token stored');",
+              "}",
+              "pm.test('status 200', function () { pm.response.to.have.status(200); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [ { "key": "Content-Type", "value": "application/json" } ],
+        "url": { "raw": "{{baseUrl}}/login", "host": ["{{baseUrl}}"], "path": ["login"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"AARR990101XXX\",\n  \"password\": \"password1\"\n}"
+        }
+      }
+    },
+    {
+      "name": "2. Get all users",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] }
+      }
+    },
+    {
+      "name": "3. Get users sorted by name",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": {
+          "raw": "{{baseUrl}}/users?sortedBy=name",
+          "host": ["{{baseUrl}}"], "path": ["users"],
+          "query": [ { "key": "sortedBy", "value": "name" } ]
+        }
+      }
+    },
+    {
+      "name": "4. Get users filtered (name co user)",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": {
+          "raw": "{{baseUrl}}/users?filter=name co user",
+          "host": ["{{baseUrl}}"], "path": ["users"],
+          "query": [ { "key": "filter", "value": "name co user" } ]
+        }
+      }
+    },
+    {
+      "name": "5. Get users filtered (email ew mail.com)",
+      "request": {
+        "method": "GET",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": {
+          "raw": "{{baseUrl}}/users?filter=email ew mail.com",
+          "host": ["{{baseUrl}}"], "path": ["users"],
+          "query": [ { "key": "filter", "value": "email ew mail.com" } ]
+        }
+      }
+    },
+    {
+      "name": "6. Create user",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "var json = pm.response.json();",
+              "if (json && json.id) { pm.collectionVariables.set('userId', json.id); }",
+              "pm.test('status 201', function () { pm.response.to.have.status(201); });"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": { "raw": "{{baseUrl}}/users", "host": ["{{baseUrl}}"], "path": ["users"] },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"user4@mail.com\",\n  \"name\": \"user4\",\n  \"phone\": \"+52 5599887766\",\n  \"password\": \"password4\",\n  \"tax_id\": \"DDUU660404WWW\",\n  \"addresses\": [\n    {\n      \"id\": 1,\n      \"name\": \"workaddress\",\n      \"street\": \"street No. 99\",\n      \"country_code\": \"MX\"\n    }\n  ]\n}"
+        }
+      }
+    },
+    {
+      "name": "7. Update user (PATCH)",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/users/{{userId}}",
+          "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"user4-updated\",\n  \"phone\": \"5500001111\"\n}"
+        }
+      }
+    },
+    {
+      "name": "8. Delete user",
+      "request": {
+        "method": "DELETE",
+        "header": [ { "key": "Authorization", "value": "Bearer {{token}}" } ],
+        "url": {
+          "raw": "{{baseUrl}}/users/{{userId}}",
+          "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}"]
+        }
+      }
+    }
+  ]
+}
