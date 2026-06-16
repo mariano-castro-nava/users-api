@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: users-api
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    default-property-inclusion: non_null
+
+server:
+  port: 8080
+
+# Application specific configuration
+app:
+  # 32+ byte secret used to derive the AES-256 key (SHA-256 of this value)
+  aes:
+    secret: "chakray-super-secret-aes-key-please-change-me"
+  jwt:
+    # Must be at least 32 bytes for HS256
+    secret: "chakray-jwt-signing-secret-please-change-me-now-2026"
+    # token lifetime in milliseconds (1 hour)
+    expiration-ms: 3600000
+  timezone: "Indian/Antananarivo"   # Madagascar
+  datetime-format: "dd-MM-yyyy HH:mm"
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  level:
+    com.chakray.usersapi: INFO
